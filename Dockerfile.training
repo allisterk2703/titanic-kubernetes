@@ -1,0 +1,20 @@
+# Dockerfile.training
+
+FROM python:3.11-slim
+
+WORKDIR /opt/ml/code
+
+COPY requirements-docker.txt .
+RUN pip --no-cache-dir install --upgrade pip setuptools wheel && pip --no-cache-dir install -r requirements-docker.txt
+
+ENV PYTHONUNBUFFERED=TRUE
+ENV PYTHONDONTWRITEBYTECODE=TRUE
+ENV PATH="/opt/ml/code:${PATH}"
+ENV GIT_PYTHON_REFRESH=quiet
+
+COPY src/ src/
+COPY train.py /opt/ml/code/train
+
+RUN mkdir -p /opt/ml/input/data /opt/ml/model /opt/ml/output
+
+RUN chmod +x /opt/ml/code/train
